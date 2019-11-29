@@ -17,10 +17,9 @@ function main() {
   DOCKERNAME="${INPUT_NAME}:${TAG}"
 
   # check if we should do anything at all with this branch
-  if [ ! -z ${ENV_PUSH_BRANCH_TO_DOCKERHUB} ] && [ "${ENV_PUSH_BRANCH_TO_DOCKERHUB}" = "true" ]; then
-    echo "PUSH_BRANCH_TO_DOCKERHUB is set"
-  else
-    echo "PUSH_BRANCH_TO_DOCKERHUB is not set"
+  if [ ! -z ${ENV_PUSH_BRANCH_TO_DOCKERHUB} ] && [ "${ENV_PUSH_BRANCH_TO_DOCKERHUB}" = "false" ]; then
+    echo "PUSH_BRANCH_TO_DOCKERHUB is false and no default branch -> stopping everything"
+    exit 0;
   fi
 
   if uses "${INPUT_WORKDIR}"; then
