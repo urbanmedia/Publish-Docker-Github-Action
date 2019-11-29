@@ -17,7 +17,7 @@ function main() {
   DOCKERNAME="${INPUT_NAME}:${TAG}"
 
   # check if we should do anything at all with this branch
-  if [ ! -z "${PUSH_BRANCH_TO_DOCKERHUB}" ] && [ "${PUSH_BRANCH_TO_DOCKERHUB}" = "true" ]; then
+  if [ ! -z ${env.PUSH_BRANCH_TO_DOCKERHUB} ] && [ "${env.PUSH_BRANCH_TO_DOCKERHUB}" = "true" ]; then
     echo "PUSH_BRANCH_TO_DOCKERHUB is set"
   else
     echo "PUSH_BRANCH_TO_DOCKERHUB is not set"
