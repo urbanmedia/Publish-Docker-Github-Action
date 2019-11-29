@@ -16,6 +16,13 @@ function main() {
   translateDockerTag
   DOCKERNAME="${INPUT_NAME}:${TAG}"
 
+  # check if we should do anything at all with this branch
+  if usesBoolean ${PUSH_BRANCH_TO_DOCKERHUB}; then
+    echo "PUSH_BRANCH_TO_DOCKERHUB is set";
+  fi
+
+  exit;
+
   if uses "${INPUT_WORKDIR}"; then
     changeWorkingDirectory
   fi
