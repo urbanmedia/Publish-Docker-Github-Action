@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 function main() {
@@ -18,9 +18,9 @@ function main() {
 
   # check if we should do anything at all with this branch
   if usesBoolean "${env.PUSH_BRANCH_TO_DOCKERHUB}"; then
-    echo "PUSH_BRANCH_TO_DOCKERHUB is set";
+    echo "PUSH_BRANCH_TO_DOCKERHUB is set"
   else
-    echo "PUSH_BRANCH_TO_DOCKERHUB is not set";
+    echo "PUSH_BRANCH_TO_DOCKERHUB is not set"
   fi
 
   if uses "${INPUT_WORKDIR}"; then
