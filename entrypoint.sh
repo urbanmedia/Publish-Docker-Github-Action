@@ -16,8 +16,10 @@ function main() {
   translateDockerTag
   DOCKERNAME="${INPUT_NAME}:${TAG}"
 
+  PUSH="${env.PUSH_BRANCH_TO_DOCKERHUB}"
+
   # check if we should do anything at all with this branch
-  if [ ! -z ${env.PUSH_BRANCH_TO_DOCKERHUB} ] && [ "${env.PUSH_BRANCH_TO_DOCKERHUB}" = "true" ]; then
+  if [ ! -z ${PUSH} ] && [ "${PUSH}" = "true" ]; then
     echo "PUSH_BRANCH_TO_DOCKERHUB is set"
   else
     echo "PUSH_BRANCH_TO_DOCKERHUB is not set"
