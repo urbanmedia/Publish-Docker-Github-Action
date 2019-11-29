@@ -18,7 +18,7 @@ function main() {
 
   # check if we should do anything at all with this branch
   if [ -z ${PUSH_BRANCH_TO_DOCKERHUB} ] || [ "${PUSH_BRANCH_TO_DOCKERHUB}" = "false" ]; then
-    echo "PUSH_BRANCH_TO_DOCKERHUB is false and no default branch -> stopping everything"
+    echo "PUSH_BRANCH_TO_DOCKERHUB is false and no default branch -> stopping push gracefully -> no error"
     exit 0;
   fi
 
