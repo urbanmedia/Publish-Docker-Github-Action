@@ -11,6 +11,8 @@ setup(){
   export INPUT_USERNAME='USERNAME'
   export INPUT_PASSWORD='PASSWORD'
   export INPUT_NAME='my/repository'
+
+  export ENV_PUSH_BRANCH_TO_DOCKERHUB='true'
 }
 
 teardown() {
