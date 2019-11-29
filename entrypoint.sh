@@ -17,7 +17,7 @@ function main() {
   DOCKERNAME="${INPUT_NAME}:${TAG}"
 
   # check if we should do anything at all with this branch
-  if [ ! -z ${ENV_PUSH_BRANCH_TO_DOCKERHUB} ] && [ "${ENV_PUSH_BRANCH_TO_DOCKERHUB}" = "false" ]; then
+  if [ ! -z ${PUSH_BRANCH_TO_DOCKERHUB} ] && [ "${PUSH_BRANCH_TO_DOCKERHUB}" = "false" ]; then
     echo "PUSH_BRANCH_TO_DOCKERHUB is false and no default branch -> stopping everything"
     exit 0;
   fi
