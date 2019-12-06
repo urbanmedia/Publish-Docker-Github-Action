@@ -36,6 +36,9 @@ function main() {
   if uses "${INPUT_BUILDARGS}"; then
     addBuildArgs
   fi
+  if uses "${INPUT_BUILDTARGET}"; then
+    useBuildTarget
+  fi
   if usesBoolean "${INPUT_CACHE}"; then
     useBuildCache
   fi
@@ -114,6 +117,10 @@ function useBuildCache() {
   if docker pull ${DOCKERNAME} 2>/dev/null; then
     BUILDPARAMS="$BUILDPARAMS --cache-from ${DOCKERNAME}"
   fi
+}
+
+function useBuildTarget() {
+  BUILDPARAMS="$BUILDPARAMS --target=${INPUT_BUILDTARGET}"
 }
 
 function uses() {
