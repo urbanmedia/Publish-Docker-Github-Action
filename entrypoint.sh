@@ -17,7 +17,7 @@ function main() {
   DOCKERNAME="${INPUT_NAME}:${TAG}"
 
   # check if we should do anything at all with this branch
-  if { [ -z ${PUSH_BRANCH_TO_DOCKERHUB} ] || [ "${PUSH_BRANCH_TO_DOCKERHUB}" = "false" ]; } && [ "${TAG}" != "develop" ] && [ "${TAG}" != "master" ]; then
+  if { [ -z ${PUSH_BRANCH_TO_DOCKERHUB} ] || [ "${PUSH_BRANCH_TO_DOCKERHUB}" = "false" ]; } && [ "${TAG}" != "develop" ] && [ "${TAG}" != "master" ] &&  ! [[ isReleaseBranch ]] ; then
     echo "workflow environment PUSH_BRANCH_TO_DOCKERHUB is false or not set and this is no default branch -> stopping push gracefully -> no error"
     exit 0;
   fi
@@ -65,7 +65,10 @@ function isPartOfTheName() {
 }
 
 function translateDockerTag() {
+
   local BRANCH=$(echo ${GITHUB_REF} | sed -e "s/refs\/heads\///g" | sed -e "s/\//-/g")
+  echo "translateDockerTag..."
+  echo "GITHUB_REF is: $GITHUB_REF"
   if hasCustomTag; then
     TAG=$(echo ${INPUT_NAME} | cut -d':' -f2)
     INPUT_NAME=$(echo ${INPUT_NAME} | cut -d':' -f1)
@@ -77,9 +80,13 @@ function translateDockerTag() {
     TAG="latest"
   elif isPullRequest; then
     TAG="${GITHUB_SHA}"
+  elif isReleaseBranch; then
+    TAG=$(echo "${GITHUB_REF}" | sed -e "s/refs\/heads\/release\///g")
   else
     TAG="${BRANCH}"
   fi;
+
+  echo "Dockerimage tag is: $TAG"
 }
 
 function hasCustomTag() {
@@ -96,6 +103,10 @@ function isGitTag() {
 
 function isPullRequest() {
   [ $(echo "${GITHUB_REF}" | sed -e "s/refs\/pull\///g") != "${GITHUB_REF}" ]
+}
+
+function isReleaseBranch() {
+  [ $(echo "${GITHUB_REF}" | sed -e "s/refs\/heads\/release\///g") != "${GITHUB_REF}" ]
 }
 
 function changeWorkingDirectory() {
