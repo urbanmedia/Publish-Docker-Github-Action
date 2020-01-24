@@ -67,8 +67,6 @@ function isPartOfTheName() {
 function translateDockerTag() {
 
   local BRANCH=$(echo ${GITHUB_REF} | sed -e "s/refs\/heads\///g" | sed -e "s/\//-/g")
-  echo "translateDockerTag..."
-  echo "GITHUB_REF is: $GITHUB_REF"
   if hasCustomTag; then
     TAG=$(echo ${INPUT_NAME} | cut -d':' -f2)
     INPUT_NAME=$(echo ${INPUT_NAME} | cut -d':' -f1)
@@ -85,8 +83,6 @@ function translateDockerTag() {
   else
     TAG="${BRANCH}"
   fi;
-
-  echo "Dockerimage tag is: $TAG"
 }
 
 function hasCustomTag() {
