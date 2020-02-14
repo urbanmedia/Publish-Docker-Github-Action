@@ -1,0 +1,13 @@
+version: "3.1"
+services:
+  action:
+    build:
+      context: .
+    environment:
+      - INPUT_NAME=${INPUT_NAME}
+      - INPUT_USERNAME=${INPUT_USERNAME}
+      - INPUT_PASSWORD=${INPUT_PASSWORD}
+      - GITHUB_REF=${GITHUB_REF}
+    volumes:
+      - ./entrypoint.sh:/entrypoint.sh
+      - ./Dockerfile:/Dockerfile
