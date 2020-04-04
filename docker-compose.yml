@@ -8,6 +8,7 @@ services:
       - INPUT_USERNAME=${INPUT_USERNAME}
       - INPUT_PASSWORD=${INPUT_PASSWORD}
       - GITHUB_REF=${GITHUB_REF}
+      - PUSH_BRANCH_TO_DOCKERHUB=${PUSH_BRANCH_TO_DOCKERHUB}
     volumes:
       - ./entrypoint.sh:/entrypoint.sh
       - ./Dockerfile:/Dockerfile
