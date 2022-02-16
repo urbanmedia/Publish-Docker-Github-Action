@@ -66,6 +66,17 @@ with:
   snapshot: true
 ```
 
+### default_branch
+Use `default_branch` when you want to use a different branch than `master` or `main` as the default branch.
+
+```yaml
+with:
+  name: myDocker/repository
+  username: ${{ secrets.DOCKER_USERNAME }}
+  password: ${{ secrets.DOCKER_PASSWORD }}
+  default_branch: trunk
+```
+
 ### dockerfile
 Use `dockerfile` when you would like to explicitly build a Dockerfile.  
 This might be useful when you have multiple DockerImages.  

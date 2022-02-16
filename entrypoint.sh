@@ -17,7 +17,7 @@ function main() {
   DOCKERNAME="${INPUT_NAME}:${TAG}"
 
   # check if we should do anything at all with this branch
-  if { [ -z ${PUSH_BRANCH_TO_DOCKERHUB} ] || [ "${PUSH_BRANCH_TO_DOCKERHUB}" = "false" ]; } && [ "${TAG}" != "develop" ] && [ "${TAG}" != "develop-1.0" ] && [ "${TAG}" != "develop-2.0" ] && [ "${TAG}" != "master" ] &&  ! isReleaseBranch && ! isGitTag ; then
+  if { [ -z ${PUSH_BRANCH_TO_DOCKERHUB} ] || [ "${PUSH_BRANCH_TO_DOCKERHUB}" = "false" ]; } && [ "${TAG}" != "develop" ] && [ "${TAG}" != "develop-1.0" ] && [ "${TAG}" != "develop-2.0" ] && [ "${TAG}" != "master" ] && [ "${TAG}" != "main" ] &&  ! isReleaseBranch && ! isGitTag ; then
     echo "workflow environment PUSH_BRANCH_TO_DOCKERHUB is false or not set and this is no default branch -> stopping push gracefully -> no error"
     exit 0;
   fi
@@ -69,7 +69,7 @@ function translateDockerTag() {
   if hasCustomTag; then
     TAG=$(echo ${INPUT_NAME} | cut -d':' -f2)
     INPUT_NAME=$(echo ${INPUT_NAME} | cut -d':' -f1)
-  elif isOnMaster; then
+  elif isOnDefaultBranch; then
     TAG="latest"
   elif isGitTag && usesBoolean "${INPUT_TAG_NAMES}"; then
     TAG=$(echo ${GITHUB_REF} | sed -e "s/refs\/tags\///g")
@@ -88,8 +88,12 @@ function hasCustomTag() {
   [ $(echo "${INPUT_NAME}" | sed -e "s/://g") != "${INPUT_NAME}" ]
 }
 
-function isOnMaster() {
-  [ "${BRANCH}" = "master" ]
+isOnDefaultBranch() {
+  if uses "${INPUT_DEFAULT_BRANCH}"; then
+    [ "${BRANCH}" = "${INPUT_DEFAULT_BRANCH}" ]
+  else
+    [ "${BRANCH}" = "master" ] || [ "${BRANCH}" = "main" ]
+  fi
 }
 
 function isGitTag() {
