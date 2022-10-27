@@ -48,7 +48,7 @@ function main() {
   else
     pushWithoutSnapshot
   fi
-  echo ::set-output name=tag::"${TAG}"
+  echo "tag=${TAG}" >> $GITHUB_OUTPUT
 
   docker logout
 }
@@ -145,7 +145,7 @@ function pushWithSnapshot() {
   docker build $BUILDPARAMS -t ${DOCKERNAME} -t ${SHA_DOCKER_NAME} .
   docker push ${DOCKERNAME}
   docker push ${SHA_DOCKER_NAME}
-  echo ::set-output name=snapshot-tag::"${SNAPSHOT_TAG}"
+  echo "snapshot-tag=${SNAPSHOT_TAG}" >> $GITHUB_OUTPUT
 }
 
 function pushWithoutSnapshot() {
