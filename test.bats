@@ -8,6 +8,7 @@ setup(){
   ) > mockReturns
 
   export GITHUB_REF='refs/heads/master'
+  export GITHUB_OUTPUT='/github-output'
   export INPUT_USERNAME='USERNAME'
   export INPUT_PASSWORD='PASSWORD'
   export INPUT_NAME='my/repository'
@@ -24,6 +25,9 @@ teardown() {
   unset GITHUB_SHA
   unset INPUT_PULL_REQUESTS
   unset MOCK_ERROR_CONDITION
+
+  rm $GITHUB_OUTPUT
+  unset GITHUB_OUTPUT
 }
 
 @test "it pushes master branch to latest" {
@@ -31,8 +35,8 @@ teardown() {
 
   run /entrypoint.sh
 
-  expectStdOut "
-::set-output name=tag::latest"
+  file_content=`cat $GITHUB_OUTPUT`
+  [ "$file_content" == 'tag=latest' ]
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build -t my/repository:latest .
@@ -45,8 +49,8 @@ teardown() {
 
   run /entrypoint.sh
 
-  expectStdOut "
-::set-output name=tag::myBranch"
+  file_content=`cat $GITHUB_OUTPUT`
+  [ "$file_content" == 'tag=myBranch' ]
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build -t my/repository:myBranch .
@@ -59,8 +63,8 @@ teardown() {
 
   run /entrypoint.sh
 
-  expectStdOut "
-::set-output name=tag::myBranch-withDash"
+  file_content=`cat $GITHUB_OUTPUT`
+  [ "$file_content" == 'tag=myBranch-withDash' ]
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build -t my/repository:myBranch-withDash .
@@ -73,8 +77,8 @@ teardown() {
 
   run /entrypoint.sh
 
-  expectStdOut "
-::set-output name=tag::latest"
+  file_content=`cat $GITHUB_OUTPUT`
+  [ "$file_content" == 'tag=latest' ]
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build -t my/repository:latest .
@@ -88,8 +92,8 @@ teardown() {
 
   run /entrypoint.sh
 
-  expectStdOut "
-::set-output name=tag::myRelease"
+  file_content=`cat $GITHUB_OUTPUT`
+  [ "$file_content" == 'tag=myRelease' ]
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build -t my/repository:myRelease .
@@ -103,8 +107,8 @@ teardown() {
 
   run /entrypoint.sh
 
-  expectStdOut "
-::set-output name=tag::latest"
+  file_content=`cat $GITHUB_OUTPUT`
+  [ "$file_content" == 'tag=latest' ]
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build -t my/repository:latest .
@@ -117,8 +121,8 @@ teardown() {
 
   run /entrypoint.sh  export GITHUB_REF='refs/heads/master'
 
-  expectStdOut "
-::set-output name=tag::latest"
+  file_content=`cat $GITHUB_OUTPUT`
+  [ "$file_content" == 'tag=latest' ]
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build -f MyDockerFileName -t my/repository:latest .
@@ -137,9 +141,8 @@ teardown() {
 
   run /entrypoint.sh
 
-  expectStdOut "
-::set-output name=snapshot-tag::19700101010112169e
-::set-output name=tag::latest"
+  file_content=`cat $GITHUB_OUTPUT`
+  [ "$file_content" == $'snapshot-tag=19700101010112169e\ntag=latest' ]
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/bin/date +%Y%m%d%H%M%S
@@ -160,8 +163,8 @@ teardown() {
 
   run /entrypoint.sh
 
-  expectStdOut "
-::set-output name=tag::latest"
+  file_content=`cat $GITHUB_OUTPUT`
+  [ "$file_content" == 'tag=latest' ]
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build -t my/repository:latest .
@@ -319,8 +322,8 @@ teardown() {
 
   run /entrypoint.sh
 
-  expectStdOut "
-::set-output name=tag::12169ed809255604e557a82617264e9c373faca7"
+  file_content=`cat $GITHUB_OUTPUT`
+  [ "$file_content" == 'tag=12169ed809255604e557a82617264e9c373faca7' ]
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 .
@@ -333,8 +336,8 @@ teardown() {
 
   run /entrypoint.sh
 
-  expectStdOut "
-::set-output name=tag::custom-tag"
+  file_content=`cat $GITHUB_OUTPUT`
+  [ "$file_content" == 'tag=custom-tag' ]
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build -t my/repository:custom-tag .
@@ -347,10 +350,10 @@ teardown() {
 
   run /entrypoint.sh
 
-  expectStdOut "
-::add-mask::MY_FIRST
-::add-mask::MY_SECOND
-::set-output name=tag::latest"
+  file_content=`cat $GITHUB_OUTPUT`
+  [ "$file_content" == 'tag=latest' ]
+
+  expectStdOut $'\n::add-mask::MY_FIRST\n::add-mask::MY_SECOND'
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build --build-arg MY_FIRST --build-arg MY_SECOND -t my/repository:latest .
@@ -363,9 +366,10 @@ teardown() {
 
   run /entrypoint.sh
 
-  expectStdOut "
-::add-mask::MY_ONLY
-::set-output name=tag::latest"
+  file_content=`cat $GITHUB_OUTPUT`
+  [ "$file_content" == 'tag=latest' ]
+
+  expectStdOut $'\n::add-mask::MY_ONLY'
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build --build-arg MY_ONLY -t my/repository:latest .
