@@ -77,7 +77,8 @@ function translateDockerTag() {
   elif isGitTag; then
     TAG="latest"
   elif isPullRequest; then
-    TAG="${{ github.head_ref }}"
+    BRANCH=$(echo ${{ github.head_ref }} | sed -e "s/refs\/heads\///g" | sed -e "s/\//-/g" | sed -e 's/[^ -~]//g')
+    TAG="${BRANCH}"
   elif isReleaseBranch; then
     TAG=$(echo "${GITHUB_REF}-rc" | sed -e "s/refs\/heads\/release\///g")
   else
