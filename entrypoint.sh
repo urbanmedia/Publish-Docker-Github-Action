@@ -15,6 +15,7 @@ function main() {
 
   translateDockerTag
   DOCKERNAME="${INPUT_NAME}:${TAG}"
+  echo "Building and pushing ${DOCKERNAME}"
 
   # check if we should do anything at all with this branch
   if { [ -z ${PUSH_BRANCH_TO_DOCKERHUB} ] || [ "${PUSH_BRANCH_TO_DOCKERHUB}" = "false" ]; } && [ "${TAG}" != "develop" ] && [ "${TAG}" != "develop-1.0" ] && [ "${TAG}" != "develop-2.0" ] && [ "${TAG}" != "master" ] &&  ! isReleaseBranch && ! isGitTag ; then
@@ -76,7 +77,8 @@ function translateDockerTag() {
   elif isGitTag; then
     TAG="latest"
   elif isPullRequest; then
-    TAG="${GITHUB_SHA}"
+    BRANCH=$(echo ${GITHUB_HEAD_REF} | sed -e "s/refs\/heads\///g" | sed -e "s/\//-/g" | sed -e 's/[^ -~]//g')
+    TAG="${BRANCH}"
   elif isReleaseBranch; then
     TAG=$(echo "${GITHUB_REF}-rc" | sed -e "s/refs\/heads\/release\///g")
   else
